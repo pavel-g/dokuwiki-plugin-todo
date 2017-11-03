@@ -102,6 +102,10 @@ if(!defined('DOKU_INC')) die();
  * need to inherit from this class
  */
 class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
+    
+    const PRIORITY_NORMAL = 'normal';
+    
+    const PRIORITY_HI = 'hi';
 
     /**
      * Get the type of syntax this plugin defines.
@@ -247,6 +251,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
         unset($data['completeddate']);
 	$data['showdate'] = $this->getConf("ShowdateTag");
         $data['username'] = $this->getConf("Username");
+        $data['priority'] = self::PRIORITY_NORMAL;
         $options = explode(' ', $todoargs);
         foreach($options as $option) {
             $option = trim($option);
@@ -285,10 +290,24 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
                             $data['showdate'] = ($value == 'yes');
                         }
                         break;
+                    case 'priority':
+                        if ($value === self::PRIORITY_HI) {
+                            $data['priority'] = self::PRIORITY_HI;
+                        }
+                        break;
                 }
             }
         }
         return $data;
+    }
+    
+    protected function createFlag(&$return, $data) {
+        if ($data['checked'] === false && $data['priority'] === self::PRIORITY_HI) {
+            $flag = '/dokuwiki/lib/plugins/todo/task-hi.png';
+        } else {
+            $flag = '/dokuwiki/lib/plugins/todo/task-normal.png';
+        }
+        $return .= '<img src="' . $flag . '">';
     }
 
     /**
@@ -315,6 +334,8 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
             . ' data-strikethrough="' . ($this->getConf("Strikethrough") ? '1' : '0') . '"'
             . ($checked ? 'checked="checked"' : '') . ' /> ';
         }
+        
+        $this->createFlag($return, $data);
 
         // Username of first todouser in list
         if($todouser && $data['username'] != 'none') {
