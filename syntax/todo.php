@@ -298,6 +298,9 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
                 }
             }
         }
+        if ($data['checked']) {
+            $data['priority'] = self::PRIORITY_NORMAL;
+        }
         return $data;
     }
     
