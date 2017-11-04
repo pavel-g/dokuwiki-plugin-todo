@@ -12,6 +12,9 @@
  */
 
 if(!defined('DOKU_INC')) die();
+
+require_once(__DIR__ . '/syntax/todo.php');
+
 /**
  * Class action_plugin_todo registers actions
  */
@@ -72,7 +75,7 @@ class action_plugin_todo extends DokuWiki_Action_Plugin {
      */
     public function _ajax_call(&$event, $param) {
         global $ID, $conf, $lang;
-
+        
         if($event->data !== 'plugin_todo') {
             return;
         }
@@ -82,14 +85,26 @@ class action_plugin_todo extends DokuWiki_Action_Plugin {
 
         #Variables
         // by einhirn <marg@rz.tu-clausthal.de> determine checkbox index by using class 'todocheckbox'
-
-        if(isset($_REQUEST['index'], $_REQUEST['checked'], $_REQUEST['pageid'])) {
+        
+        if (isset($_REQUEST['index'], $_REQUEST['pageid'])) {
             // index = position of occurrence of <input> element (starting with 0 for first element)
             $index = (int) $_REQUEST['index'];
-            // checked = flag if input is checked means to do is complete (1) or not (0)
-            $checked = (boolean) urldecode($_REQUEST['checked']);
             // path = page ID
             $ID = cleanID(urldecode($_REQUEST['pageid']));
+        } else {
+            return;
+        }
+        
+        if (isset($_REQUEST['checked'])) {
+            // checked = flag if input is checked means to do is complete (1) or not (0)
+            $checked = (boolean) urldecode($_REQUEST['checked']);
+            $togglePriority = false;
+        } elseif (isset($_REQUEST['toggle_priority'])) {
+            $togglePriority = (boolean) urlencode($_REQUEST['toggle_priority']);
+            $checked = null;
+            if ($togglePriority !== true) {
+                return;
+            }
         } else {
             return;
         }
@@ -140,7 +155,11 @@ class action_plugin_todo extends DokuWiki_Action_Plugin {
 				$todoText = substr( $wikitext, $todoTagEndPos, $todoTextEndPos-$todoTagEndPos );
                 // update text
                 $oldTag = substr($wikitext, $todoTagStartPos, ($todoTagEndPos - $todoTagStartPos));
-                $newTag = $this->_buildTodoTag($oldTag, $checked);
+                if ($checked !== null) {
+                    $newTag = $this->_buildTodoTag($oldTag, $checked);
+                } else if ($togglePriority) {
+                    $newTag = $this->_togglePriorityTodoTag($oldTag);
+                }
                 $wikitext = substr_replace($wikitext, $newTag, $todoTagStartPos, ($todoTagEndPos - $todoTagStartPos));
 
                 // save Update (Minor)
@@ -182,6 +201,42 @@ class action_plugin_todo extends DokuWiki_Action_Plugin {
         } else {
             $newTag = preg_replace('/[\s]*[#].*>/', '>', $todoTag);
         }
+        return $newTag;
+    }
+    
+    private function _togglePriorityTodoTag($todoTag) {
+        $priorityKey = 'priority';
+        $priorityPos = strpos($todoTag, $priorityKey);
+        $prioritySearchRes = preg_match('/priority[\w:]*/', $todoTag, $priorityOption);
+        
+        if ($prioritySearchRes === 0) {
+            $priority = syntax_plugin_todo_todo::PRIORITY_NORMAL;
+            $newPriority = syntax_plugin_todo_todo::PRIORITY_HI;
+            $newTag = preg_replace('/>/', " $priorityKey:$newPriority>", $todoTag);
+        } else if ($prioritySearchRes > 0) {
+            $priorityOption = $priorityOption[0];
+            $parts = explode(':', $priorityOption);
+            if (count($parts) < 2) {
+                $priority = syntax_plugin_todo_todo::PRIORITY_NORMAL;
+                $newPriority = syntax_plugin_todo_todo::PRIORITY_HI;
+            } else {
+                $priority = $parts[1];
+                $transformations = [
+                    syntax_plugin_todo_todo::PRIORITY_NORMAL => syntax_plugin_todo_todo::PRIORITY_HI,
+                    syntax_plugin_todo_todo::PRIORITY_HI => syntax_plugin_todo_todo::PRIORITY_NORMAL
+                ];
+                if (array_key_exists($priority, $transformations)) {
+                    $newPriority = $transformations[$priority];
+                } else {
+                    $priority = syntax_plugin_todo_todo::PRIORITY_NORMAL;
+                    $newPriority = syntax_plugin_todo_todo::PRIORITY_HI;
+                }
+            }
+            $newTag = str_replace($priorityOption, "$priorityKey:$newPriority", $todoTag);
+        } else {
+            $newTag = $todoTag;
+        }
+        
         return $newTag;
     }
 
