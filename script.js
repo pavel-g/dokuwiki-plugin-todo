@@ -107,7 +107,7 @@ var ToDoPlugin = {
     /**
      * @param {jQuery} chk the jQuery input element
      */
-    priority: function(chk) {
+    priority: function(chk, img) {
         if (ToDoPlugin.locked) {
             return;
         }
@@ -122,7 +122,28 @@ var ToDoPlugin = {
         
         if (spanTodoinnertext.length) {
             
-            var callback = function() {
+            var callback = function(data) {
+                if (data.date) {
+                    jQuery('input.todocheckbox').data('date', data.date);
+                }
+                if (data.message) {
+                    alert(data.message);
+                }
+                
+                if (data.succeed) {
+                    var src = img.attr('src');
+                    var transformations = {
+                        '/dokuwiki/lib/plugins/todo/task-hi.png': '/dokuwiki/lib/plugins/todo/task-normal.png',
+                        '/dokuwiki/lib/plugins/todo/task-normal.png': '/dokuwiki/lib/plugins/todo/task-hi.png'
+                    };
+                    if (transformations.hasOwnProperty(src)) {
+                        var newSrc = transformations[src];
+                    } else {
+                        newSrc = '/dokuwiki/lib/plugins/todo/task-hi.png';
+                    }
+                    img.attr('src', newSrc);
+                }
+                
                 ToDoPlugin.locked = false;
             };
             
@@ -168,7 +189,7 @@ jQuery(function(){
     
     jQuery('img.todopriority').click(function() {
         var chk = jQuery(this).prevAll('input.todocheckbox:first');
-        ToDoPlugin.priority(chk);
+        ToDoPlugin.priority(chk, jQuery(this));
     });
 
 });
