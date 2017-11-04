@@ -307,7 +307,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
         } else {
             $flag = '/dokuwiki/lib/plugins/todo/task-normal.png';
         }
-        $return .= '<img src="' . $flag . '">';
+        $return .= '<img class="todopriority" src="' . $flag . '">';
     }
 
     /**

@@ -102,8 +102,45 @@ var ToDoPlugin = {
             alert("Appropriate javascript element not found.\nReverting checkmark.");
         }
 
-    }
+    },
 
+    /**
+     * @param {jQuery} chk the jQuery input element
+     */
+    priority: function(chk) {
+        if (ToDoPlugin.locked) {
+            return;
+        }
+        
+        ToDoPlugin.locked = true;
+        
+        var spanTodoinnertext = chk.nextAll("span.todotext:first").find("span.todoinnertext");
+        var param = chk.data();
+        var checked = !chk.is(':checked');
+        
+        if (param.index === undefined) param.index = -1;
+        
+        if (spanTodoinnertext.length) {
+            
+            var callback = function() {
+                ToDoPlugin.locked = false;
+            };
+            
+            jQuery.post(
+                DOKU_BASE + 'lib/exe/ajax.php',
+                {
+                    call: 'plugin_todo',
+                    index: param.index,
+                    pageid: param.pageid,
+                    toggle_priority: true,
+                    date: param.date
+                },
+                callback,
+                'json'
+            );
+        }
+        
+    }
 
 };
 
@@ -127,6 +164,11 @@ jQuery(function(){
         var $chk = jQuery(this).prevAll('input.todocheckbox:first');
 
         ToDoPlugin.todo($chk);
+    });
+    
+    jQuery('img.todopriority').click(function() {
+        var chk = jQuery(this).prevAll('input.todocheckbox:first');
+        ToDoPlugin.priority(chk);
     });
 
 });
