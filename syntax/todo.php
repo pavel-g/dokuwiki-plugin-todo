@@ -377,6 +377,9 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
             $return .= '<del>';
         }
         $return .= '<span class="todoinnertext">';
+        if ($data['priority'] === self::PRIORITY_HI) {
+            $return .= '<b>';
+        }
         if($this->getConf("AllowLinks")) {
             $return .= $this->_createLink($renderer, $todotitle, $todotitle);
         } else {
@@ -385,6 +388,9 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
             } else {
                  $return .= hsc($todotitle);
             }
+        }
+        if ($data['priority'] === self::PRIORITY_HI) {
+            $return .= '</b>';
         }
         $return .= '</span>';
 
