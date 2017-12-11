@@ -116,7 +116,11 @@ var ToDoPlugin = {
         
         var spanTodoinnertext = chk.nextAll("span.todotext:first").find("span.todoinnertext");
         var param = chk.data();
-        var checked = !chk.is(':checked');
+        var checked = chk.is(':checked');
+        
+        if (checked) {
+            return;
+        }
         
         if (param.index === undefined) param.index = -1;
         
