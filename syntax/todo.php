@@ -105,7 +105,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
     
     const PRIORITY_NORMAL = 'normal';
     
-    const PRIORITY_HI = 'hi';
+    const PRIORITY_HIGH = 'high';
 
     /**
      * Get the type of syntax this plugin defines.
@@ -291,8 +291,8 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
                         }
                         break;
                     case 'priority':
-                        if ($value === self::PRIORITY_HI) {
-                            $data['priority'] = self::PRIORITY_HI;
+                        if ($value === self::PRIORITY_HIGH) {
+                            $data['priority'] = self::PRIORITY_HIGH;
                         }
                         break;
                 }
@@ -305,10 +305,10 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
     }
     
     protected function createFlag(&$return, $data) {
-        if ($data['checked'] === false && $data['priority'] === self::PRIORITY_HI) {
-            $flag = '/dokuwiki/lib/plugins/todo/task-hi.png';
+        if ($data['checked'] === false && $data['priority'] === self::PRIORITY_HIGH) {
+            $flag = '/dokuwiki/lib/plugins/todo/task-high.png'; // TODO: 2017-12-11 Fix path
         } else {
-            $flag = '/dokuwiki/lib/plugins/todo/task-normal.png';
+            $flag = '/dokuwiki/lib/plugins/todo/task-normal.png'; // TODO: 2017-12-11 Fix path
         }
         $return .= '<img class="todopriority" src="' . $flag . '">';
     }
@@ -380,7 +380,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
             $return .= '<del>';
         }
         $return .= '<span class="todoinnertext">';
-        if ($data['priority'] === self::PRIORITY_HI) {
+        if ($data['priority'] === self::PRIORITY_HIGH) {
             $return .= '<b>';
         }
         if($this->getConf("AllowLinks")) {
@@ -392,7 +392,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
                  $return .= hsc($todotitle);
             }
         }
-        if ($data['priority'] === self::PRIORITY_HI) {
+        if ($data['priority'] === self::PRIORITY_HIGH) {
             $return .= '</b>';
         }
         $return .= '</span>';

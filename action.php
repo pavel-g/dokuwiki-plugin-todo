@@ -211,25 +211,25 @@ class action_plugin_todo extends DokuWiki_Action_Plugin {
         
         if ($prioritySearchRes === 0) {
             $priority = syntax_plugin_todo_todo::PRIORITY_NORMAL;
-            $newPriority = syntax_plugin_todo_todo::PRIORITY_HI;
+            $newPriority = syntax_plugin_todo_todo::PRIORITY_HIGH;
             $newTag = preg_replace('/>/', " $priorityKey:$newPriority>", $todoTag);
         } else if ($prioritySearchRes > 0) {
             $priorityOption = $priorityOption[0];
             $parts = explode(':', $priorityOption);
             if (count($parts) < 2) {
                 $priority = syntax_plugin_todo_todo::PRIORITY_NORMAL;
-                $newPriority = syntax_plugin_todo_todo::PRIORITY_HI;
+                $newPriority = syntax_plugin_todo_todo::PRIORITY_HIGH;
             } else {
                 $priority = $parts[1];
                 $transformations = [
-                    syntax_plugin_todo_todo::PRIORITY_NORMAL => syntax_plugin_todo_todo::PRIORITY_HI,
-                    syntax_plugin_todo_todo::PRIORITY_HI => syntax_plugin_todo_todo::PRIORITY_NORMAL
+                    syntax_plugin_todo_todo::PRIORITY_NORMAL => syntax_plugin_todo_todo::PRIORITY_HIGH,
+                    syntax_plugin_todo_todo::PRIORITY_HIGH => syntax_plugin_todo_todo::PRIORITY_NORMAL
                 ];
                 if (array_key_exists($priority, $transformations)) {
                     $newPriority = $transformations[$priority];
                 } else {
                     $priority = syntax_plugin_todo_todo::PRIORITY_NORMAL;
-                    $newPriority = syntax_plugin_todo_todo::PRIORITY_HI;
+                    $newPriority = syntax_plugin_todo_todo::PRIORITY_HIGH;
                 }
             }
             $newTag = str_replace($priorityOption, "$priorityKey:$newPriority", $todoTag);

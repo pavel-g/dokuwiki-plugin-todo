@@ -133,13 +133,13 @@ var ToDoPlugin = {
                 if (data.succeed) {
                     var src = img.attr('src');
                     var transformations = {
-                        '/dokuwiki/lib/plugins/todo/task-hi.png': '/dokuwiki/lib/plugins/todo/task-normal.png',
-                        '/dokuwiki/lib/plugins/todo/task-normal.png': '/dokuwiki/lib/plugins/todo/task-hi.png'
+                        '/dokuwiki/lib/plugins/todo/task-high.png': '/dokuwiki/lib/plugins/todo/task-normal.png', // TODO: 2017-12-11 fix path
+                        '/dokuwiki/lib/plugins/todo/task-normal.png': '/dokuwiki/lib/plugins/todo/task-high.png'
                     };
                     if (transformations.hasOwnProperty(src)) {
                         var newSrc = transformations[src];
                     } else {
-                        newSrc = '/dokuwiki/lib/plugins/todo/task-hi.png';
+                        newSrc = '/dokuwiki/lib/plugins/todo/task-high.png'; // TODO: 2017-12-11 fix path
                     }
                     img.attr('src', newSrc);
                 }
