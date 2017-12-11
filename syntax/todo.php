@@ -249,7 +249,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
         unset($data['start']);
         unset($data['due']);
         unset($data['completeddate']);
-	$data['showdate'] = $this->getConf("ShowdateTag");
+        $data['showdate'] = $this->getConf("ShowdateTag");
         $data['username'] = $this->getConf("Username");
         $data['priority'] = self::PRIORITY_NORMAL;
         $options = explode(' ', $todoargs);
@@ -266,7 +266,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
                 if(date('Y-m-d', strtotime($completeddate)) == $completeddate) {
                     $data['completeddate'] = new DateTime($completeddate);
                 }
-	    }
+            }
             else {
                 @list($key, $value) = explode(':', $option, 2);
                 switch($key) {
@@ -285,7 +285,7 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
                             $data['due'] = new DateTime($value);
                         }
                         break;
-		    case 'showdate':
+                    case 'showdate':
                         if(in_array($value, array('yes', 'no'))) {
                             $data['showdate'] = ($value == 'yes');
                         }
