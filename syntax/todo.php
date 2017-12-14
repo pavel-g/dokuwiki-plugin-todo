@@ -306,9 +306,9 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
     
     protected function createFlag(&$return, $data) {
         if ($data['checked'] === false && $data['priority'] === self::PRIORITY_HIGH) {
-            $flag = '/dokuwiki/lib/plugins/todo/task-high.png'; // TODO: 2017-12-11 Fix path
+            $flag = 'lib/plugins/todo/task-high.png';
         } else {
-            $flag = '/dokuwiki/lib/plugins/todo/task-normal.png'; // TODO: 2017-12-11 Fix path
+            $flag = 'lib/plugins/todo/task-normal.png';
         }
         $return .= '<img class="todopriority" src="' . $flag . '">';
     }
