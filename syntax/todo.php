@@ -379,10 +379,14 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
         if($checked && $this->getConf("Strikethrough")) {
             $return .= '<del>';
         }
-        $return .= '<span class="todoinnertext">';
+        
         if ($data['priority'] === self::PRIORITY_HIGH) {
-            $return .= '<b>';
+            $priorityStyle = ' style="font-weight: bold;"';
+        } else {
+            $priorityStyle = ' style="font-weight: normal;"';
         }
+        
+        $return .= '<span class="todoinnertext"' . $priorityStyle . '>';
         if($this->getConf("AllowLinks")) {
             $return .= $this->_createLink($renderer, $todotitle, $todotitle);
         } else {
@@ -391,9 +395,6 @@ class syntax_plugin_todo_todo extends DokuWiki_Syntax_Plugin {
             } else {
                  $return .= hsc($todotitle);
             }
-        }
-        if ($data['priority'] === self::PRIORITY_HIGH) {
-            $return .= '</b>';
         }
         $return .= '</span>';
 
