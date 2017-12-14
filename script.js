@@ -119,6 +119,7 @@ var ToDoPlugin = {
         var checked = chk.is(':checked');
         
         if (checked) {
+            ToDoPlugin.locked = false;
             return;
         }
         
@@ -135,17 +136,7 @@ var ToDoPlugin = {
                 }
                 
                 if (data.succeed) {
-                    var src = img.attr('src');
-                    var transformations = {
-                        '/dokuwiki/lib/plugins/todo/task-high.png': '/dokuwiki/lib/plugins/todo/task-normal.png', // TODO: 2017-12-11 fix path
-                        '/dokuwiki/lib/plugins/todo/task-normal.png': '/dokuwiki/lib/plugins/todo/task-high.png'
-                    };
-                    if (transformations.hasOwnProperty(src)) {
-                        var newSrc = transformations[src];
-                    } else {
-                        newSrc = '/dokuwiki/lib/plugins/todo/task-high.png'; // TODO: 2017-12-11 fix path
-                    }
-                    img.attr('src', newSrc);
+                    ToDoPlugin.togglePriority(img, spanTodoinnertext);
                 }
                 
                 ToDoPlugin.locked = false;
@@ -165,6 +156,34 @@ var ToDoPlugin = {
             );
         }
         
+    },
+    
+    priorities: {
+        normal: 'lib/plugins/todo/task-normal.png',
+        high: 'lib/plugins/todo/task-high.png'
+    },
+    
+    parsePriority: function(img) {
+        if (!img) {
+            return 'normal';
+        }
+        var src = img.attr('src');
+        if (src === ToDoPlugin.priorities.high) {
+            return 'high';
+        } else {
+            return 'normal';
+        }
+    },
+    
+    togglePriority: function(img, spanTodoinnertext) {
+        var priority = ToDoPlugin.parsePriority(img);
+        if (priority === 'normal') {
+            img.attr('src', ToDoPlugin.priorities.high);
+            spanTodoinnertext.css({'font-weight': 'bold'});
+        } else {
+            img.attr('src', ToDoPlugin.priorities.normal);
+            spanTodoinnertext.css({'font-weight': 'normal'});
+        }
     }
 
 };
